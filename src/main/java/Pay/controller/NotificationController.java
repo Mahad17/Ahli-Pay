@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -75,22 +76,18 @@ public ResponseHandler refreshtoken(@RequestBody Token token){
 
         }
 
+    }
+    @GetMapping("/all")
+    public ResponseHandler allNotificationGet(){
+        List<NotificationData> notificationDataList= notificationRepo.findAll();
+if(notificationDataList.isEmpty()){
+    return new ResponseHandler(0,"No notification yet");
 
+}
+else {
+    return new ResponseHandler(1,"all notifications",notificationDataList);
+
+}
     }
 
-//
-//    @PostMapping("/send")
-//    public ResponseEntity<String> sendNotificationToAdmin(
-//            @RequestParam String adminToken,
-//            @RequestParam String title,
-//            @RequestParam String message) {
-//
-//        // Send notification to the admin
-//        try {
-//            notificationService.sendNotificationToUser(adminToken, title, message);
-//            return ResponseEntity.ok("Notification sent successfully to admin.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending notification to admin.");
-//        }
-//    }
 }
