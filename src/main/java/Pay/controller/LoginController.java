@@ -56,9 +56,9 @@ public class LoginController {
 			return new ResponseHandler(0, "Number already exists");
 		}
 
-		String userNamePattern= "^[a-zA-Z]+$";
+		String userNamePattern = "^[a-zA-Z]+$";
 		if(!user.getUserName().matches(userNamePattern)){
-			return new ResponseHandler(0,"user name must contain only letters");
+			return new ResponseHandler(0,"No space, user name must contain only letters");
 		}
 		String passwordPattern="^(?!\\s)[A-Za-z\\d!@#$%^&*()_+{}:;<>,.?~\\-=|\\[\\]]{8,}$";
 		if (!user.getPassword().matches(passwordPattern)){
@@ -138,9 +138,9 @@ public class LoginController {
 			return new ResponseHandler(0, "Number already exists");
 		}
 
-		String userNamePattern= "^[a-zA-Z]+$";
+		String userNamePattern = "^[a-zA-Z]+$";
 		if(!admin.getUserName().matches(userNamePattern)){
-			return new ResponseHandler(0,"user name must contain only letters");
+			return new ResponseHandler(0,"No space, user name must contain only letters");
 		}
 		String passwordPattern="^(?!\\s)[A-Za-z\\d!@#$%^&*()_+{}:;<>,.?~\\-=|\\[\\]]{8,}$";
 		if (!admin.getPassword().matches(passwordPattern)){
