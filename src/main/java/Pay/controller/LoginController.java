@@ -1,8 +1,10 @@
 package Pay.controller;
 
 import Pay.model.Admin;
+import Pay.model.NotificationData;
 import Pay.model.User;
 import Pay.repository.AdminRepository;
+import Pay.repository.NotificationRepo;
 import Pay.repository.UserRepository;
 import Pay.response.ResponseHandler;
 import Pay.services.LogInService;
@@ -11,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/pay")
@@ -22,8 +26,12 @@ public class LoginController {
 
 	@Autowired
 	UserRepository repository;
+
 	@Autowired
 	AdminRepository adminRepository;
+
+	@Autowired
+	NotificationRepo repo;
 
 	@PostMapping(value = "/user-signUp",produces = "application/json")
 	public ResponseHandler signUpUser(@RequestBody @Valid User user) {
@@ -56,7 +64,7 @@ public class LoginController {
 			return new ResponseHandler(0, "Number already exists");
 		}
 
-		String userNamePattern = "^[a-zA-Z]+$";
+		String userNamePattern = "^[a-zA-Z ]+$";
 		if(!user.getUserName().matches(userNamePattern)){
 			return new ResponseHandler(0,"No space, user name must contain only letters");
 		}
@@ -138,7 +146,7 @@ public class LoginController {
 			return new ResponseHandler(0, "Number already exists");
 		}
 
-		String userNamePattern = "^[a-zA-Z]+$";
+		String userNamePattern = "^[a-zA-Z ]+$";
 		if(!admin.getUserName().matches(userNamePattern)){
 			return new ResponseHandler(0,"No space, user name must contain only letters");
 		}
@@ -199,11 +207,34 @@ public class LoginController {
 			return new ResponseHandler(0, "no user found.");
 		}else{
 			return new ResponseHandler(1, "These users have registered already.",findAllUser);
-
 		}
 
 }
+//	@GetMapping(value="/getmessagesbyid/{userId}")
+//	public ResponseHandler getMessagesById(@PathVariable("userId") String userId){
+//		NotificationData data= repo.findByUserId(userId)	;
+//		if(data==null){
+//			return new ResponseHandler(0,"no user found");
+//		}
+//		else{
+//			return new ResponseHandler(1,"this user found",data);
+//
+//		}
+//	}
+@GetMapping(value="/getmessagesbyid/{userId}")
+public List<ResponseHandler> getMessagesById(@PathVariable("userId") String userId) {
+	List<NotificationData> dataList = repo.findAllByUserId(userId);
+	List<ResponseHandler> responses = new ArrayList<>();
 
+	if(dataList.isEmpty()) {
+		responses.add(new ResponseHandler(0, "No user found"));
+	} else {
+		for(NotificationData data : dataList) {
+			responses.add(new ResponseHandler(1, "User found", data));
+		}
+	}
+	return responses;
+}
 }
 
 

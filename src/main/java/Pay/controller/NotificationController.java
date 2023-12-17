@@ -1,18 +1,17 @@
 package Pay.controller;
 
 //import Pay.model.NotificationData;
-import Pay.model.Admin;
-import Pay.model.NotificationData;
-import Pay.model.NotificationRequest;
+import Pay.model.*;
 //import Pay.repository.NotificationRepo;
 //import Pay.services.NotificationService;
-import Pay.model.Token;
 import Pay.repository.AdminRepository;
+import Pay.repository.MessagesRepository;
 import Pay.repository.NotificationRepo;
 import Pay.response.ResponseHandler;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,16 +51,40 @@ public class NotificationController {
     NotificationRepo notificationRepo;
 //    @Autowired
 //    NotificationService notificationService;
-    @PostMapping("/save")
-    public ResponseEntity<String> saveNotificationData(@RequestBody NotificationData notificationData) {
-        // Process and save the received data
-        try {
-            notificationRepo.save(notificationData);
-            return ResponseEntity.ok("Data saved successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving data.");
-        }
+    @Autowired
+    MessagesRepository messagesRepository;
+@PostMapping("/save")
+public ResponseEntity<Object> saveNotificationData(@RequestBody NotificationData notificationData) {
+    if (StringUtils.isEmpty(notificationData.getUserId()) ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseHandler(0, "Fields are empty"));
     }
+
+    NotificationData savedData = notificationRepo.save(notificationData);
+//   Messages messages=new Messages();
+    if (savedData != null) {
+//        int notificationId = savedData.getNotificationId();
+//        messages.setNotificationId(savedData.getNotificationId());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseHandler(1, "Data saved", savedData));
+    } else {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseHandler(0, "Failed to save"));
+    }
+}
+
+    //    @PostMapping("/save")
+//    public ResponseHandler saveNotificationData(@RequestBody NotificationData notificationData) {
+//        // Process and save the received data
+//        if(StringUtils.isEmpty(notificationData.getUserId())||notificationData.getMessagesList()==null){
+//            return new ResponseHandler(0,"fields are empty");
+//        }
+//            NotificationData data= notificationRepo.save(notificationData);
+//        if(data!=null) {
+//            return new ResponseHandler(1, "data saved", data);
+//        }else{
+//            return new ResponseHandler(0,"not saved");
+//
+//        }
+//    }
     @PostMapping("/refresh-token")
 public ResponseHandler refreshtoken(@RequestBody Token token){
         String tokentorefresh=token.getToken();

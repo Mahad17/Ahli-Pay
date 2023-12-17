@@ -12,6 +12,7 @@ public interface UserRepository extends CrudRepository<User, Integer>{
     User findByUserName(String username);
     public boolean existsByUserName(String userName);
 
+    User findById(int userId);
     public boolean existsByPhoneNumber(String phoneNumber);
     User findByPhoneNumber(String phoneNumber);
 
