@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,23 +54,61 @@ public class NotificationController {
 //    NotificationService notificationService;
     @Autowired
     MessagesRepository messagesRepository;
-@PostMapping("/save")
-public ResponseEntity<Object> saveNotificationData(@RequestBody NotificationData notificationData) {
-    if (StringUtils.isEmpty(notificationData.getUserId()) ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseHandler(0, "Fields are empty"));
+
+    @PostMapping("/save")
+    public ResponseEntity<Object> saveNotificationData(@RequestBody NotificationData notificationData) {
+        if (StringUtils.isEmpty(notificationData.getUserId())) {
+            return ResponseEntity.badRequest().body(new ResponseHandler(0, "Fields are empty"));
+        }
+
+        Optional<NotificationData> existingData = Optional.ofNullable(notificationRepo.findByUserId(notificationData.getUserId()));
+
+        if (existingData.isPresent()) {
+            // If NotificationData with given userId exists, update the messagesList
+            NotificationData savedData = existingData.get();
+
+            if (notificationData.getMessagesList() != null) {
+                if (savedData.getMessagesList() == null) {
+                    savedData.setMessagesList(new ArrayList<>());
+                }
+                savedData.getMessagesList().addAll(notificationData.getMessagesList());
+            }
+
+            savedData = notificationRepo.save(savedData);
+            if (savedData != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseHandler(1, "Data updated", savedData));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseHandler(0, "Failed to update"));
+            }
+        } else {
+            // If NotificationData with given userId does not exist, create a new entry
+            NotificationData savedData = notificationRepo.save(notificationData);
+
+            if (savedData != null) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseHandler(1, "Data saved", savedData));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseHandler(0, "Failed to save"));
+            }
+        }
     }
 
-    NotificationData savedData = notificationRepo.save(notificationData);
-//   Messages messages=new Messages();
-    if (savedData != null) {
-//        int notificationId = savedData.getNotificationId();
-//        messages.setNotificationId(savedData.getNotificationId());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseHandler(1, "Data saved", savedData));
-    } else {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseHandler(0, "Failed to save"));
-    }
-}
+//@PostMapping("/save")
+//public ResponseEntity<Object> saveNotificationData(@RequestBody NotificationData notificationData) {
+//    if (StringUtils.isEmpty(notificationData.getUserId()) ) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseHandler(0, "Fields are empty"));
+//    }
+//
+//    NotificationData savedData = notificationRepo.save(notificationData);
+////   Messages messages=new Messages();
+//    if (savedData != null) {
+////        int notificationId = savedData.getNotificationId();
+////        messages.setNotificationId(savedData.getNotificationId());
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseHandler(1, "Data saved", savedData));
+//    } else {
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseHandler(0, "Failed to save"));
+//    }
+//}
 
     //    @PostMapping("/save")
 //    public ResponseHandler saveNotificationData(@RequestBody NotificationData notificationData) {
