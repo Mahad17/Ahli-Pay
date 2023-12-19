@@ -233,7 +233,7 @@ public List<ResponseHandler> getMessagesById(@PathVariable("userId") String user
 		responses.add(new ResponseHandler(0, "No user found"));
 	} else {
 		for(NotificationData data : dataList) {
-			responses.add(new ResponseHandler(1, "User found", data));
+			responses.add(new ResponseHandler(1, "User found", "data"+data));
 		}
 	}
 	return responses;
