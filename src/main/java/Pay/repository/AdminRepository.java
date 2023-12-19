@@ -17,6 +17,8 @@ public interface AdminRepository extends CrudRepository<Admin, Integer>{
     public boolean existsByPhoneNumber(String phoneNumber);
     Admin findByPhoneNumber(String phoneNumber);
 
+//    List<Admin> findAllWithToken();
+
 //    List<Admin> findAllAdmin();
 
 //    boolean existsByNumber(String phoneNumber);
