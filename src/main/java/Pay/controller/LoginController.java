@@ -10,6 +10,8 @@ import Pay.response.ResponseHandler;
 import Pay.services.LogInService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -179,10 +181,11 @@ public class LoginController {
 	}
 	@PostMapping(value = "/admin-login",produces = "application/json")
 	public ResponseHandler logInAdmin(@RequestBody Admin admin){
-		if (StringUtils.isEmpty(admin.getUserName())|| StringUtils.isEmpty(admin.getPassword())){
+		if (StringUtils.isEmpty(admin.getUserName())|| StringUtils.isEmpty(admin.getPassword())||StringUtils.isEmpty(admin.getToken())){
 			return new ResponseHandler(0,"fields are empty");
 		}
-
+Admin adminFInd=adminRepository.findById(admin.getId());
+		adminFInd.setToken(admin.getToken());
 
 //		String phoneNumber= user.getCountryCode() + user.getNumber();
 		boolean numberExists=adminRepository.existsByUserName(admin.getUserName());
@@ -222,19 +225,23 @@ public class LoginController {
 //		}
 //	}
 @GetMapping(value="/getmessagesbyid/{userId}")
-public List<ResponseHandler> getMessagesById(@PathVariable("userId") String userId) {
+public ResponseEntity<?> getMessagesById(@PathVariable("userId") String userId) {
 	List<NotificationData> dataList = repo.findAllByUserId(userId);
-	List<ResponseHandler> responses = new ArrayList<>();
 
 	if(dataList.isEmpty()) {
-		responses.add(new ResponseHandler(0, "No user found"));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseHandler(0, "No user found"));
+	} else if(dataList.size() == 1) {
+		NotificationData data = dataList.get(0);
+		return ResponseEntity.ok(new ResponseHandler(1, "User found", data));
 	} else {
+		List<ResponseHandler> responses = new ArrayList<>();
 		for(NotificationData data : dataList) {
 			responses.add(new ResponseHandler(1, "User found", data));
 		}
+		return ResponseEntity.ok(responses);
 	}
-	return responses;
 }
+
 }
 
 
