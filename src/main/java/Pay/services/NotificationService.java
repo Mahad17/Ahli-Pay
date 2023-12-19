@@ -16,7 +16,7 @@ public class NotificationService {
     public void sendNotificationToAdmin(String notificationMessage) {
         try {
             // Load Firebase credentials file
-            FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
+            FileInputStream serviceAccount = new FileInputStream("path/to/serviceAccountKey.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
