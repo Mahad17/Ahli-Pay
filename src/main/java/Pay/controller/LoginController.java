@@ -10,6 +10,8 @@ import Pay.response.ResponseHandler;
 import Pay.services.LogInService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -213,31 +215,38 @@ public class LoginController {
 		}
 
 }
-//	@GetMapping(value="/getmessagesbyid/{userId}")
-//	public ResponseHandler getMessagesById(@PathVariable("userId") String userId){
-//		NotificationData data= repo.findByUserId(userId)	;
-//		if(data==null){
-//			return new ResponseHandler(0,"no user found");
-//		}
-//		else{
-//			return new ResponseHandler(1,"this user found",data);
-//
-//		}
-//	}
 @GetMapping(value="/getmessagesbyid/{userId}")
-public List<ResponseHandler> getMessagesById(@PathVariable("userId") String userId) {
+public ResponseEntity<?> getMessagesById(@PathVariable("userId") String userId) {
 	List<NotificationData> dataList = repo.findAllByUserId(userId);
-	List<ResponseHandler> responses = new ArrayList<>();
 
 	if(dataList.isEmpty()) {
-		responses.add(new ResponseHandler(0, "No user found"));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseHandler(0, "No user found"));
+	} else if(dataList.size() == 1) {
+		NotificationData data = dataList.get(0);
+		return ResponseEntity.ok(new ResponseHandler(1, "User found", data));
 	} else {
+		List<ResponseHandler> responses = new ArrayList<>();
 		for(NotificationData data : dataList) {
-			responses.add(new ResponseHandler(1, "User found", "data"+data));
+			responses.add(new ResponseHandler(1, "User found", data));
 		}
+		return ResponseEntity.ok(responses);
 	}
-	return responses;
 }
+
+//	@GetMapping(value="/getmessagesbyid/{userId}")
+//public List<ResponseHandler> getMessagesById(@PathVariable("userId") String userId) {
+//	List<NotificationData> dataList = repo.findAllByUserId(userId);
+//	List<ResponseHandler> responses = new ArrayList<>();
+//
+//	if(dataList.isEmpty()) {
+//		responses.add(new ResponseHandler(0, "No user found"));
+//	} else {
+//		for(NotificationData data : dataList) {
+//			responses.add(new ResponseHandler(1, "User found", data));
+//		}
+//	}
+//	return responses;
+//}
 }
 
 
