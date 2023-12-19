@@ -179,13 +179,15 @@ public class LoginController {
 	}
 	@PostMapping(value = "/admin-login",produces = "application/json")
 	public ResponseHandler logInAdmin(@RequestBody Admin admin){
-		if (StringUtils.isEmpty(admin.getUserName())|| StringUtils.isEmpty(admin.getPassword())){
+		if (StringUtils.isEmpty(admin.getUserName())|| StringUtils.isEmpty(admin.getPassword())|| StringUtils.isEmpty(admin.getToken())){
 			return new ResponseHandler(0,"fields are empty");
 		}
 
 
 //		String phoneNumber= user.getCountryCode() + user.getNumber();
 		boolean numberExists=adminRepository.existsByUserName(admin.getUserName());
+		Admin adminFind=adminRepository.findByUserName(admin.getUserName());
+
 		if (!numberExists){
 			return new ResponseHandler(0,"Not Registered");
 		}
@@ -193,6 +195,7 @@ public class LoginController {
 			Boolean isAuthenticated = logInService.logInAdmin(admin.getPassword(), admin.getUserName());
 			if (isAuthenticated) {
 				Admin authenticate = adminRepository.findByUserName(admin.getUserName());
+				adminFind.setToken(admin.getToken());
 				return new ResponseHandler(1, "Login successful.", authenticate);
 			} else {
 				return new ResponseHandler(0, "Incorrect password.");
