@@ -184,8 +184,8 @@ public class LoginController {
 		if (StringUtils.isEmpty(admin.getUserName())|| StringUtils.isEmpty(admin.getPassword())||StringUtils.isEmpty(admin.getToken())){
 			return new ResponseHandler(0,"fields are empty");
 		}
-Admin adminFInd=adminRepository.findById(admin.getId());
-		adminFInd.setToken(admin.getToken());
+          Admin adminFInd=adminRepository.findById(admin.getId());
+
 
 //		String phoneNumber= user.getCountryCode() + user.getNumber();
 		boolean numberExists=adminRepository.existsByUserName(admin.getUserName());
@@ -196,6 +196,8 @@ Admin adminFInd=adminRepository.findById(admin.getId());
 			Boolean isAuthenticated = logInService.logInAdmin(admin.getPassword(), admin.getUserName());
 			if (isAuthenticated) {
 				Admin authenticate = adminRepository.findByUserName(admin.getUserName());
+				adminFInd.setToken(admin.getToken());
+
 				return new ResponseHandler(1, "Login successful.", authenticate);
 			} else {
 				return new ResponseHandler(0, "Incorrect password.");
