@@ -30,6 +30,8 @@ public class NotificationController {
     AdminRepository adminRepository;
     @PostMapping("/send-notification")
     public String sendNotification(@RequestBody NotificationRequest notificationRequest) {
+        FirebaseConfig firebaseConfig=new FirebaseConfig();
+        firebaseConfig.initializeFirebase();
         // Initialize Firebase Admin SDK (ensure you've downloaded the service account JSON file)
         FirebaseMessaging firebaseMessaging = FirebaseMessaging.getInstance();
 

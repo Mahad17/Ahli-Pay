@@ -41,7 +41,6 @@ public class LoginController {
 		if(
 				StringUtils.isEmpty(user.getCprNumber()) ||
 						StringUtils.isEmpty(user.getPhoneNumber()) ||
-//						StringUtils.isEmpty(user.getCountryCode()) ||
 						StringUtils.isEmpty(user.getPassword()) ||
 						StringUtils.isEmpty(user.getUserName()
 						)){
