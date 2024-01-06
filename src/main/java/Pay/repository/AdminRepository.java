@@ -1,7 +1,7 @@
 package Pay.repository;
 
 import Pay.model.Admin;
-import Pay.model.User;
+import Pay.model.UserData;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package Pay.services;
 
 import Pay.model.Admin;
-import Pay.model.User;
+import Pay.model.UserData;
 import Pay.repository.AdminRepository;
 import Pay.repository.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -25,20 +25,20 @@ public class LogInService {
 
     public Boolean logIn(String password,String username){
 //String phoneNumber=countryCode + number;
-        User find= userRepository.findByUserName(username);
+        UserData find= userRepository.findByUserName(username);
         return passwordEncoder.matches(password,find.getPassword());
     }
 
-    public User postDetails(User User) {
+    public UserData postDetails(UserData UserData) {
 
-//        String countryCode= User.getCountryCode();
-//        String phoneNumber=User.getNumber();
+//        String countryCode= UserData.getCountryCode();
+//        String phoneNumber=UserData.getNumber();
 //        String phoneNumberMerge=countryCode + phoneNumber;
-//        User.setPhoneNumber(phoneNumberMerge);
+//        UserData.setPhoneNumber(phoneNumberMerge);
         BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
-        String encrypt= bCryptPasswordEncoder.encode(User.getPassword());
-        User.setPassword(encrypt);
-        return userRepository.save(User);
+        String encrypt= bCryptPasswordEncoder.encode(UserData.getPassword());
+        UserData.setPassword(encrypt);
+        return userRepository.save(UserData);
     }
     public Boolean logInAdmin(String password,String username){
 //String phoneNumber=countryCode + number;
@@ -47,10 +47,10 @@ public class LogInService {
     }
     public Admin postDetailsAdmin(Admin admin) {
 
-//        String countryCode= User.getCountryCode();
-//        String phoneNumber=User.getNumber();
+//        String countryCode= UserData.getCountryCode();
+//        String phoneNumber=UserData.getNumber();
 //        String phoneNumberMerge=countryCode + phoneNumber;
-//        User.setPhoneNumber(phoneNumberMerge);
+//        UserData.setPhoneNumber(phoneNumberMerge);
         BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
         String encrypt= bCryptPasswordEncoder.encode(admin.getPassword());
         admin.setPassword(encrypt);

@@ -2,7 +2,7 @@ package Pay.controller;
 
 import Pay.model.Admin;
 import Pay.model.NotificationData;
-import Pay.model.User;
+import Pay.model.UserData;
 import Pay.repository.AdminRepository;
 import Pay.repository.NotificationRepo;
 import Pay.repository.UserRepository;
@@ -36,7 +36,7 @@ public class LoginController {
 	NotificationRepo repo;
 
 	@PostMapping(value = "/user-signUp",produces = "application/json")
-	public ResponseHandler signUpUser(@RequestBody @Valid User user) {
+	public ResponseHandler signUpUserData(@RequestBody @Valid UserData user) {
 		System.out.println(user);
 		if(
 				StringUtils.isEmpty(user.getCprNumber()) ||
@@ -48,7 +48,7 @@ public class LoginController {
 
 		}
 
-		User find=repository.findByUserName(user.getUserName());
+		UserData find=repository.findByUserName(user.getUserName());
 		if(find!=null){
 			return  new ResponseHandler(0,"name already exist");
 
@@ -84,7 +84,7 @@ public class LoginController {
 
 
 
-		User post= logInService.postDetails(user);
+		UserData post= logInService.postDetails(user);
 		if (post!=null){
 			return new ResponseHandler(1, "Signed Up successfully",post);
 
@@ -93,7 +93,7 @@ public class LoginController {
 		}
 	}
 @PostMapping(value = "/user-login",produces = "application/json")
-	public ResponseHandler logIn(@RequestBody User user){
+	public ResponseHandler logIn(@RequestBody UserData user){
 		if (StringUtils.isEmpty(user.getUserName())|| StringUtils.isEmpty(user.getPassword())){
 			return new ResponseHandler(0,"fields are empty");
 		}
@@ -102,12 +102,12 @@ public class LoginController {
 //		String phoneNumber= user.getCountryCode() + user.getNumber();
 		boolean numberExists=repository.existsByUserName(user.getUserName());
 		if (!numberExists){
-			return new ResponseHandler(0,"User Not Registered");
+			return new ResponseHandler(0,"UserData Not Registered");
 		}
 		else{
 			Boolean isAuthenticated = logInService.logIn(user.getPassword(), user.getUserName());
 			if (isAuthenticated) {
-				User authenticate = repository.findByUserName(user.getUserName());
+				UserData authenticate = repository.findByUserName(user.getUserName());
 				return new ResponseHandler(1, "Login successful.", authenticate);
 			} else {
 				return new ResponseHandler(0, "Incorrect password.");
@@ -204,18 +204,18 @@ public class LoginController {
 	}
 
 @GetMapping(value = "/all-user",produces =  "application/json;charset=UTF-8")
-	public ResponseHandler getAllUser(){
-		List<User> findAllUser= (List<User>) repository.findAll();
-		if(findAllUser.isEmpty()){
+	public ResponseHandler getAllUserData(){
+		List<UserData> findAllUserData= (List<UserData>) repository.findAll();
+		if(findAllUserData.isEmpty()){
 			return new ResponseHandler(0, "no user found.");
 		}else{
-			return new ResponseHandler(1, "These users have registered already.",findAllUser);
+			return new ResponseHandler(1, "These users have registered already.",findAllUserData);
 		}
 
 }
 //	@GetMapping(value="/getmessagesbyid/{userId}")
 //	public ResponseHandler getMessagesById(@PathVariable("userId") String userId){
-//		NotificationData data= repo.findByUserId(userId)	;
+//		NotificationData data= repo.findByUserDataId(userId)	;
 //		if(data==null){
 //			return new ResponseHandler(0,"no user found");
 //		}
@@ -232,11 +232,11 @@ public ResponseEntity<?> getMessagesById(@PathVariable("userId") String userId) 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseHandler(0, "No user found"));
 	} else if(dataList.size() == 1) {
 		NotificationData data = dataList.get(0);
-		return ResponseEntity.ok(new ResponseHandler(1, "User found", data));
+		return ResponseEntity.ok(new ResponseHandler(1, "UserData found", data));
 	} else {
 		List<ResponseHandler> responses = new ArrayList<>();
 		for(NotificationData data : dataList) {
-			responses.add(new ResponseHandler(1, "User found", data));
+			responses.add(new ResponseHandler(1, "UserData found", data));
 		}
 		return ResponseEntity.ok(responses);
 	}

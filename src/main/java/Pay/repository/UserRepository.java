@@ -1,22 +1,22 @@
 package Pay.repository;
 
-import Pay.model.User;
+import Pay.model.UserData;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Integer>{
+public interface UserRepository extends CrudRepository<UserData, Integer>{
 //    Boolean findByNumber(String number);
-    User findByUserName(String username);
+    UserData findByUserName(String username);
     public boolean existsByUserName(String userName);
 
-    User findById(int userId);
+    UserData findById(int userId);
     public boolean existsByPhoneNumber(String phoneNumber);
-    User findByPhoneNumber(String phoneNumber);
+    UserData findByPhoneNumber(String phoneNumber);
 
-//    List<User> findAllUse();
+//    List<UserData> findAllUse();
 
 //    boolean existsByNumber(String phoneNumber);
 }
